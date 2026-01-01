@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Poker Ledger Calculator</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Poker Ledger</p>
+          <div class="suits" aria-hidden="true">♠ ♥ ♦ ♣</div>
+          <h1>CSV Settlement Calculator</h1>
+          <p class="lead">
+            Upload your session CSV, and the app will compute who should send
+            money to whom based on net results.
+          </p>
+        </div>
+        <div class="upload-card">
+          <label class="upload" for="csvFile">
+            <span>Choose CSV file</span>
+            <input id="csvFile" type="file" accept=".csv" />
+          </label>
+          <p class="hint">Works with the exported PokerStars ledger CSV.</p>
+          <p class="hint">
+            Required columns: <strong>player_nickname</strong>,
+            <strong>player_id</strong>, <strong>net</strong>.
+          </p>
+        </div>
+      </header>
+
+      <section class="panel" id="resultsPanel" hidden>
+        <div class="panel-header">
+          <h2>Settlement Results</h2>
+          <div>
+            <p id="rowCount" class="subtle"></p>
+            <p id="netTotal" class="subtle"></p>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <h3>Player Totals</h3>
+            <div class="table-wrap">
+              <table id="totalsTable">
+                <thead>
+                  <tr>
+                    <th>Player</th>
+                    <th>Player ID</th>
+                    <th class="num">Net</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card">
+            <h3>Transfers</h3>
+            <div class="table-wrap">
+              <table id="transfersTable">
+                <thead>
+                  <tr>
+                    <th>From</th>
+                    <th>To</th>
+                    <th class="num">Amount</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <p class="hint" id="transferHint"></p>
+          </div>
+        </div>
+      </section>
+      <footer class="footer">
+        Built by <a href="https://github.com/johnwon2007/pokerstars-ledger-calculator">johnwon2007</a>.
+      </footer>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
