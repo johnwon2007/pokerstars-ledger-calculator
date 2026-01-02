@@ -5,6 +5,60 @@ const transfersTableBody = document.querySelector("#transfersTable tbody");
 const transferHint = document.getElementById("transferHint");
 const rowCount = document.getElementById("rowCount");
 const netTotal = document.getElementById("netTotal");
+const transfersCard = document.getElementById("transfersCard");
+const downloadTransfersBtn = document.getElementById("downloadTransfersBtn");
+const totalsCard = document.getElementById("totalsCard");
+const downloadTotalsBtn = document.getElementById("downloadTotalsBtn");
+const resultsGrid = document.getElementById("resultsGrid");
+const downloadAllBtn = document.getElementById("downloadAllBtn");
+
+downloadTransfersBtn.addEventListener("click", async () => {
+  if (!transfersCard) {
+    return;
+  }
+  if (typeof html2canvas !== "function") {
+    alert("Image export is unavailable. Please refresh and try again.");
+    return;
+  }
+
+  await downloadCardImage({
+    target: transfersCard,
+    filename: "poker-transfers.png",
+    button: downloadTransfersBtn,
+  });
+});
+
+downloadTotalsBtn.addEventListener("click", async () => {
+  if (!totalsCard) {
+    return;
+  }
+  if (typeof html2canvas !== "function") {
+    alert("Image export is unavailable. Please refresh and try again.");
+    return;
+  }
+
+  await downloadCardImage({
+    target: totalsCard,
+    filename: "poker-totals.png",
+    button: downloadTotalsBtn,
+  });
+});
+
+downloadAllBtn.addEventListener("click", async () => {
+  if (!resultsGrid) {
+    return;
+  }
+  if (typeof html2canvas !== "function") {
+    alert("Image export is unavailable. Please refresh and try again.");
+    return;
+  }
+
+  await downloadCardImage({
+    target: resultsGrid,
+    filename: "poker-results.png",
+    button: downloadAllBtn,
+  });
+});
 
 fileInput.addEventListener("change", async (event) => {
   const file = event.target.files[0];
@@ -84,6 +138,8 @@ function renderTotals(players) {
 
   if (players.length === 0) {
     totalsTableBody.innerHTML = `<tr><td colspan="3">No players found.</td></tr>`;
+    setDownloadState(downloadTotalsBtn, false);
+    setDownloadState(downloadAllBtn, false);
     return;
   }
 
@@ -96,6 +152,9 @@ function renderTotals(players) {
     `;
     totalsTableBody.appendChild(row);
   });
+
+  setDownloadState(downloadTotalsBtn, true);
+  setDownloadState(downloadAllBtn, true);
 }
 
 function renderTransfers(transfers) {
@@ -104,6 +163,7 @@ function renderTransfers(transfers) {
   if (transfers.length === 0) {
     transfersTableBody.innerHTML = `<tr><td colspan="3">No transfers needed.</td></tr>`;
     transferHint.textContent = "Everyone is settled already.";
+    setDownloadState(downloadTransfersBtn, true);
     return;
   }
 
@@ -118,6 +178,7 @@ function renderTransfers(transfers) {
   });
 
   transferHint.textContent = `${transfers.length} transfers required.`;
+  setDownloadState(downloadTransfersBtn, true);
 }
 
 function renderEmpty(message) {
@@ -127,6 +188,9 @@ function renderEmpty(message) {
   transferHint.textContent = "";
   rowCount.textContent = "";
   netTotal.textContent = "";
+  setDownloadState(downloadTransfersBtn, false);
+  setDownloadState(downloadTotalsBtn, false);
+  setDownloadState(downloadAllBtn, false);
 }
 
 function computeTransfers(players) {
@@ -191,6 +255,7 @@ function renderTotalNet(total) {
   netTotal.textContent = `Total net: ${formatMoney(rounded)} (unbalanced, transfers disabled)`;
   transfersTableBody.innerHTML = `<tr><td colspan="3">Transfers disabled. Fix the CSV total net first.</td></tr>`;
   transferHint.textContent = "";
+  setDownloadState(downloadTransfersBtn, false);
 }
 
 function formatNicknames(nicknameSet) {
@@ -256,4 +321,36 @@ function escapeHTML(value) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
+}
+
+async function downloadCardImage({ target, filename, button }) {
+  button.disabled = true;
+  const originalLabel = button.textContent;
+  button.textContent = "Preparing...";
+
+  try {
+    const canvas = await html2canvas(target, {
+      backgroundColor: "#0a0a0c",
+      scale: 2,
+    });
+    const dataUrl = canvas.toDataURL("image/png");
+    const link = document.createElement("a");
+    link.href = dataUrl;
+    link.download = filename;
+    link.click();
+  } catch (error) {
+    alert("Unable to capture the image. Please try again.");
+    console.error(error);
+  } finally {
+    button.textContent = originalLabel;
+    button.disabled = false;
+  }
+}
+
+function setDownloadState(button, enabled) {
+  if (!button) {
+    return;
+  }
+  button.hidden = !enabled;
+  button.disabled = !enabled;
 }

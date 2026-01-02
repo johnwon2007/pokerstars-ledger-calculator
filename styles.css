@@ -23,7 +23,9 @@ body {
   margin: 0;
   font-family: "Work Sans", "Segoe UI", sans-serif;
   color: var(--ink);
-  background: radial-gradient(circle at top, #1b1b1e 0%, #121214 48%, #0a0a0c 100%);
+  background:
+    linear-gradient(rgba(10, 10, 12, 0.7), rgba(10, 10, 12, 0.7)),
+    url("images/pokerchips.png") center / cover no-repeat fixed;
 }
 
 .page {
@@ -170,6 +172,36 @@ h1 {
   padding: 20px;
   box-shadow: 0 16px 30px var(--shadow);
   border: 1px solid var(--line);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ghost-btn {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  color: var(--chip-white);
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.ghost-btn:hover:not(:disabled) {
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-1px);
+}
+
+.ghost-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .footer {
